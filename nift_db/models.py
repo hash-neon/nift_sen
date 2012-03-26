@@ -23,6 +23,28 @@ class User(models.Model):
 	user_id    	= models.CharField(max_length=20, primary_key=True)	
 	marital_status  = models.CharField(max_length=1, choices=STATUS_CHOICES)
 
+class Profile(models.Model):
+	DESIGNATION_CHOICES = (
+		('1','Professor'),
+		('2','Assistant Professor'),
+		('3','Associate Professor'),
+		('4','Senior Professor'),
+		('5','Director'),
+		('6','Assistant'),
+		('7','Centre Coordinator'),
+		('8','Director General'),
+	)
+	join_date 	= models.DateField()
+	designation 	= models.CharField(max_length=1, choices=DESIGNATION_CHOICES)
+	basic_pay 	= models.IntegerField()
+#	department 	= models.CharField(max_length..........)
+#	centre 		= models.CharField(max_length.........)
+	room_no 	= models.CharField(max_length=10)
+	past_positions 	= models.CharField(max_length=150)
+	experience 	= models.SmallIntegerField()
+	expertise 	= models.CharField(max_length=150)
+#	image 		= models.ImageField(upload_to='images/%Y/%m/%d')
+
 class Attendance(models.Model):
 	date 		= models.DateField(auto_now=True)
 	present 	= models.BooleanField()
@@ -61,7 +83,8 @@ class Offered(models.Model):
 	sem_id 		= models.ForeignKey(Sem_Info)
 	course_id 	= models.ForeignKey(Course)
 	cen_dep_info 	= models.ForeignKey(Cen_Dep_Info)
-	user_id 	= models.ForeignKey(User)
+	every_info 	= models.AutoField(primary_key=True)
+	user_id         = models.ForeignKey(User)
 
 class Teaching(models.Model):
 	STUDY_CHOICES = (
@@ -81,9 +104,46 @@ class Teaching(models.Model):
 		('8','CraftCluster'),
 	)
 
-	sem_id 		= models.ForeignKey(Sem_Info)
-	course_id 	= models.ForeignKey(Course)
-	user_id 	= models.ForeignKey(User)
 	study_type 	= models.CharField(max_length=1, choices=STUDY_CHOICES)
 	detail_type 	= models.CharField(max_length=1, choices=TYPE_CHOICES)
 	teaching_id 	= models.AutoField(primary_key=True)
+	hours 		= models.SmallIntegerField()
+	every_info 	= models.ForeignKey(Offered)
+
+class Feedback(models.Model):
+	WEEK_CHOICES = (
+		('1','First'),
+		('2','Second'),
+		('3','Third'),
+		('4','Forth'),
+	)
+
+	week_no 	= models.CharField(max_length=1, choices=WEEK_CHOICES)
+	avg_content_rat = models.SmallIntegerField()
+	avg_present_rat = models.SmallIntegerField()
+	feedback_id 	= models.AutoField(primary_key=True)
+	every_info      = models.ForeignKey(Offered)
+
+class Leave_Info(models.Model):
+	LEAVE_CHOICES = (
+		('1','Earned'),
+		('2','Casual'),
+		('3','Restricted'),
+		('4','Hospital'),
+		('5','Maternity'),
+	)
+
+	leave_type 	= models.CharField(max_length=1, choices=LEAVE_CHOICES)
+	start_date 	= models.DateField()
+	reason 		= models.CharField(max_length=1000)
+	no_of_days 	= models.SmallIntegerField()
+	approved 	= models.BooleanField()
+	days_left 	= models.SmallIntegerField()
+	user_id 	= models.ForeignKey(User)
+	leave_id 	= models.AutoField(primary_key=True)
+
+class Leave_Extension_Info(models.Model):
+	last_leave_id 	= models.ForeignKey(Leave_Info)
+	reason 		= models.CharField(max_length=1000)
+	approved 	= models.BooleanField()
+	eleave_id 	= models.AutoField(primary_key=True)
