@@ -34,16 +34,34 @@ class Profile(models.Model):
 		('7','Centre Coordinator'),
 		('8','Director General'),
 	)
+
+	CENTRE_CHOICES = (
+		('1','Bhopal'),
+		('2','Bhuwaneshwar'),
+		('3','Bengaluru'),
+		('4','Delhi'),
+		('5','Kangra'),
+		('6','Chennai'),
+		('7','Kolkatta'),
+		('8','Mumbai'),
+		('9','Gandhinagar'),
+		('10','Raebareli'),
+		('11','Jodhpur'),
+		('12','Patna'),
+		('13','Hyderabad'),
+		('14','Shillong'),
+	)
+
 	join_date 	= models.DateField()
 	designation 	= models.CharField(max_length=1, choices=DESIGNATION_CHOICES)
 	basic_pay 	= models.IntegerField()
 #	department 	= models.CharField(max_length..........)
-#	centre 		= models.CharField(max_length.........)
+	centre 		= models.CharField(max_length=2, choices=CENTRE_CHOICES)
 	room_no 	= models.CharField(max_length=10)
 	past_positions 	= models.CharField(max_length=150)
 	experience 	= models.SmallIntegerField()
 	expertise 	= models.CharField(max_length=150)
-#	image 		= models.ImageField(upload_to='images/%Y/%m/%d')
+	image 		= models.ImageField(upload_to='/images/%Y/%m/%d')
 
 class Attendance(models.Model):
 	date 		= models.DateField(auto_now=True)
@@ -77,13 +95,13 @@ class Course(models.Model):
 class Cen_Dep_Info(models.Model):
 	centre_name 	= models.CharField(max_length=50)
 	department_name = models.CharField(max_length=50)
-	cen_dep_info 	= models.AutoField(primary_key=True)
+	cen_dep_id 	= models.AutoField(primary_key=True)
 
 class Offered(models.Model):
 	sem_id 		= models.ForeignKey(Sem_Info)
 	course_id 	= models.ForeignKey(Course)
-	cen_dep_info 	= models.ForeignKey(Cen_Dep_Info)
-	every_info 	= models.AutoField(primary_key=True)
+	cen_dep_id 	= models.ForeignKey(Cen_Dep_Info)
+	every_id 	= models.AutoField(primary_key=True)
 	user_id         = models.ForeignKey(User)
 
 class Teaching(models.Model):
@@ -108,7 +126,8 @@ class Teaching(models.Model):
 	detail_type 	= models.CharField(max_length=1, choices=TYPE_CHOICES)
 	teaching_id 	= models.AutoField(primary_key=True)
 	hours 		= models.SmallIntegerField()
-	every_info 	= models.ForeignKey(Offered)
+	every_id 	= models.ForeignKey(Offered)
+	user_id 	= models.ForeignKey(User)
 
 class Feedback(models.Model):
 	WEEK_CHOICES = (
@@ -122,7 +141,7 @@ class Feedback(models.Model):
 	avg_content_rat = models.SmallIntegerField()
 	avg_present_rat = models.SmallIntegerField()
 	feedback_id 	= models.AutoField(primary_key=True)
-	every_info      = models.ForeignKey(Offered)
+	every_id      = models.ForeignKey(Offered)
 
 class Leave_Info(models.Model):
 	LEAVE_CHOICES = (
@@ -146,4 +165,5 @@ class Leave_Extension_Info(models.Model):
 	last_leave_id 	= models.ForeignKey(Leave_Info)
 	reason 		= models.CharField(max_length=1000)
 	approved 	= models.BooleanField()
+	no_of_days      = models.SmallIntegerField()
 	eleave_id 	= models.AutoField(primary_key=True)
