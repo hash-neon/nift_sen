@@ -1,7 +1,8 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
-class User(models.Model):
+class Nift_User(models.Model):
 	SEX_CHOICES = (
 		('M','Male'),
 		('F','Female'),
@@ -12,16 +13,19 @@ class User(models.Model):
 		('U','Unmarried'),
 	)
 
-	first_name 	= models.CharField(max_length=100)
-	last_name  	= models.CharField(max_length=100)
-	login_name 	= models.CharField(max_length=100, unique=True) 
+	first_name 	= models.OneToOneField(User)
+	last_name  	= models.OneToOneField(User)
+	username 	= models.OneToOneField(User, unique=True, blank=False) 
       	sex        	= models.CharField(max_length=1, choices=SEX_CHOICES)
-	password   	= models.CharField(max_length=100)
-	email_add  	= models.EmailField(max_length=100)
+	password   	= models.OneToOneField(User)
+	email 	 	= models.OntToOneField(User)
 	dob 	   	= models.DateField()
-	phone_no   	= models.SmallIntegerField()
+	phone_no   	= models.CharField()
 	user_id    	= models.CharField(max_length=20, primary_key=True)	
 	marital_status  = models.CharField(max_length=1, choices=STATUS_CHOICES)
+	perm_street 	= models.CharField(max_length=200)
+	perm_zip 	= models.SmallIntegerField()
+	perm_state 	= models.CharField(max_length=50)
 
 class Profile(models.Model):
 	DESIGNATION_CHOICES = (
@@ -54,29 +58,19 @@ class Profile(models.Model):
 
 	join_date 	= models.DateField()
 	designation 	= models.CharField(max_length=1, choices=DESIGNATION_CHOICES)
-	basic_pay 	= models.IntegerField()
 #	department 	= models.CharField(max_length..........)
 	centre 		= models.CharField(max_length=2, choices=CENTRE_CHOICES)
 	room_no 	= models.CharField(max_length=10)
-	past_positions 	= models.CharField(max_length=150)
-	experience 	= models.SmallIntegerField()
-	expertise 	= models.CharField(max_length=150)
+	past_positions 	= models.CharField(max_length=150, blank=True)
+	experience 	= models.SmallIntegerField(null=True)
+	expertise 	= models.CharField(max_length=150, blank=True)
 	image 		= models.ImageField(upload_to='/images/%Y/%m/%d')
 
 class Attendance(models.Model):
 	date 		= models.DateField(auto_now=True)
 	present 	= models.BooleanField()
-	user_id 	= models.ForeignKey(User)
+	user_id 	= models.ForeignKey(Nift_User)
 	user_id.primary_key = True
-
-class Address(models.Model):
-	user_id         = models.ForeignKey(User, primary_key=True)
-	perm_street 	= models.CharField(max_length=200)
-	perm_zip 	= models.SmallIntegerField()
-	perm_state 	= models.CharField(max_length=50)
-	temp_street     = models.CharField(max_length=200)                                  
-	temp_zip        = models.SmallIntegerField()
-        temp_state  	= models.CharField(max_length=50)
 
 class Sem_Info(models.Model):
 	TERM_CHOICES = (
@@ -102,7 +96,7 @@ class Offered(models.Model):
 	course_id 	= models.ForeignKey(Course)
 	cen_dep_id 	= models.ForeignKey(Cen_Dep_Info)
 	every_id 	= models.AutoField(primary_key=True)
-	user_id         = models.ForeignKey(User)
+	user_id         = models.ForeignKey(Nift_User)
 
 class Teaching(models.Model):
 	STUDY_CHOICES = (
@@ -123,11 +117,11 @@ class Teaching(models.Model):
 	)
 
 	study_type 	= models.CharField(max_length=1, choices=STUDY_CHOICES)
-	detail_type 	= models.CharField(max_length=1, choices=TYPE_CHOICES)
+	detail_type 	= models.CharField(max_length=1, choices=TYPE_CHOICES, blank=True)
 	teaching_id 	= models.AutoField(primary_key=True)
 	hours 		= models.SmallIntegerField()
 	every_id 	= models.ForeignKey(Offered)
-	user_id 	= models.ForeignKey(User)
+	user_id 	= models.ForeignKey(Nift_User)
 
 class Feedback(models.Model):
 	WEEK_CHOICES = (
@@ -138,10 +132,10 @@ class Feedback(models.Model):
 	)
 
 	week_no 	= models.CharField(max_length=1, choices=WEEK_CHOICES)
-	avg_content_rat = models.SmallIntegerField()
-	avg_present_rat = models.SmallIntegerField()
+	avg_content_rat = models.SmallIntegerField(null=True)
+	avg_present_rat = models.SmallIntegerField(null=True)
 	feedback_id 	= models.AutoField(primary_key=True)
-	every_id      = models.ForeignKey(Offered)
+	every_id        = models.ForeignKey(Offered)
 
 class Leave_Info(models.Model):
 	LEAVE_CHOICES = (
@@ -158,7 +152,7 @@ class Leave_Info(models.Model):
 	no_of_days 	= models.SmallIntegerField()
 	approved 	= models.BooleanField()
 	days_left 	= models.SmallIntegerField()
-	user_id 	= models.ForeignKey(User)
+	user_id 	= models.ForeignKey(Nift_User)
 	leave_id 	= models.AutoField(primary_key=True)
 
 class Leave_Extension_Info(models.Model):
