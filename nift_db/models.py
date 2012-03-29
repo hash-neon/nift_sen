@@ -13,14 +13,10 @@ class Nift_User(models.Model):
 		('U','Unmarried'),
 	)
 
-	first_name 	= models.OneToOneField(User)
-	last_name  	= models.OneToOneField(User)
-	username 	= models.OneToOneField(User, unique=True, blank=False) 
+	login_name 	= models.OneToOneField(User) 
       	sex        	= models.CharField(max_length=1, choices=SEX_CHOICES)
-	password   	= models.OneToOneField(User)
-	email 	 	= models.OntToOneField(User)
 	dob 	   	= models.DateField()
-	phone_no   	= models.CharField()
+	phone_no   	= models.CharField(max_length=15)
 	user_id    	= models.CharField(max_length=20, primary_key=True)	
 	marital_status  = models.CharField(max_length=1, choices=STATUS_CHOICES)
 	perm_street 	= models.CharField(max_length=200)
@@ -65,6 +61,7 @@ class Profile(models.Model):
 	experience 	= models.SmallIntegerField(null=True)
 	expertise 	= models.CharField(max_length=150, blank=True)
 	image 		= models.ImageField(upload_to='/images/%Y/%m/%d')
+	user_id 	= models.ForeignKey(Nift_User, primary_key=True)
 
 class Attendance(models.Model):
 	date 		= models.DateField(auto_now=True)
